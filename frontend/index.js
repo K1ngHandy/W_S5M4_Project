@@ -13,6 +13,7 @@ async function moduleProject4() {
     ["Snowy", "❄️"],
     ["Partly Cloudy", "⛅️"]
   ]
+  console.log('Descriptions:', descriptions);
 
   // 👉 Tasks 1 - 5 go here
 
