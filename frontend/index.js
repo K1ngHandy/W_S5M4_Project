@@ -13,9 +13,18 @@ async function moduleProject4() {
     ["Snowy", "❄️"],
     ["Partly Cloudy", "⛅️"]
   ]
-  console.log('Descriptions:', descriptions);
 
   // 👉 Tasks 1 - 5 go here
+    // 1
+  const weatherWidget = document.querySelector('#weatherWidget');
+  weatherWidget.style.display = 'none';
+
+    // 2
+  const dropdown = document.querySelector('#citySelect');
+  dropdown.addEventListener('change', (event) => {
+    let newCity = event.target.value;
+    console.log(`City changed to ${newCity}.`);
+  })
 
   // 👆 WORK WORK ABOVE THIS LINE 👆
 
