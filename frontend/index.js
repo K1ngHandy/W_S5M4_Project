@@ -17,14 +17,31 @@ async function moduleProject4() {
   // 👉 Tasks 1 - 5 go here
     // 1
   const weatherWidget = document.querySelector('#weatherWidget');
-  weatherWidget.style.display = 'none';
+  // weatherWidget.style.display = 'none';
 
     // 2
   const dropdown = document.querySelector('#citySelect');
+  let priorCity = null;
+  
   dropdown.addEventListener('change', (event) => {
-    let newCity = event.target.value;
-    console.log(`City changed to ${newCity}.`);
-  })
+    let currentIndex = event.target.selectedIndex;
+    let currentCity = event.target.options[currentIndex];
+
+    // let currentCity = event.target.options[event.target.currentIndex];
+    
+    if (priorCity) {
+      priorCity.disabled = false;
+    }
+
+    currentCity.disabled = true;
+
+    priorCity = currentCity;
+
+    console.log(`City changed to ${currentCity.value}`);
+  });
+
+    // 3
+  
 
   // 👆 WORK WORK ABOVE THIS LINE 👆
 
