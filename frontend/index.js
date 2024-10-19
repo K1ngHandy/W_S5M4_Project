@@ -1,3 +1,5 @@
+// import axios from "axios"
+
 async function moduleProject4() {
 
   // 👇 WORK WORK BELOW THIS LINE 👇
@@ -22,22 +24,36 @@ async function moduleProject4() {
     // 2
   const dropdown = document.querySelector('#citySelect');
     // 3
-  let priorCity = null;
-  
   dropdown.addEventListener('change', (event) => {
-    let currentIndex = event.target.selectedIndex;
-    let currentCity = event.target.options[currentIndex];
+    let currentCity = event.target.value;
+    const info = document.querySelector('.info');
     
-    if (priorCity) {
-      priorCity.disabled = false;
+    // if (priorCity) {
+    //   priorCity.disabled = false;
+    // }
+
+    if (typeof axios !== 'undefined') {
+      info.innerText = 'Fetching weather data...';
+      weatherWidget.style.display = 'none';
+
+      axios.get(`http://localhost:3003/api/weather?city=${currentCity}`)
+      .then(res => {
+        currentCity.disabled = true;
+        const data = res.data;
+        console.log('Fetch data', data);
+        weatherWidget.style.display = 'block';
+        console.log(`Current city: ${currentCity}`);
+      })
+      .catch((error) => {
+        console.error(`Error fetching selected city: ${currentCity}`, error)
+      })
+      .finally(() => {
+        info.innerText = '';
+        currentCity.disabled = false;
+      })
+    } else {
+      console.error('Axios is undefined');
     }
-
-    currentCity.disabled = true;
-
-    priorCity = currentCity;
-
-    weatherWidget.style.display = 'block';
-    console.log(`City changed to ${currentCity.value}`);
   });
 
   // 👆 WORK WORK ABOVE THIS LINE 👆
