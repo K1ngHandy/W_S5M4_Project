@@ -19,8 +19,7 @@ async function moduleProject4() {
   // 👉 Tasks 1 - 5 go here
     // 1
   const weatherWidget = document.querySelector('#weatherWidget');
-  const today = document.querySelector('#today');
-  // console.log('Today:', today);
+  const current = document.querySelector('#today');
   const forecast = document.querySelector('#forecast');
   const location = document.querySelector('#location');
 
@@ -45,19 +44,34 @@ async function moduleProject4() {
         const data = res.data;
         console.log('Fetch data:', data);
         
-        // today
-        const todayData = data.current;
+        // current
+        const currentData = data.current;
+        const apparentTemp = weatherWidget.querySelector('#apparentTemp');
+        const currentDescription = weatherWidget.querySelector('#todayDescription');
+        const currentStats = weatherWidget.querySelector('#todayStats');
+        let precipitation = (currentData.precipitation_probability * 100);
+        let humidity = currentData.humidity;
         // forecast
         const forecastData = data.forecast;
         // location
         const locationData = data.location;
-        console.log('Location data:', locationData);
+
+        apparentTemp.children[1].innerText = currentData.apparent_temperature;
+        descriptions.forEach(description => {
+          if (description[0] === currentData.weather_description) {
+            console.log('Description:', description[1]);
+            currentDescription.innerText = `${description[1]}`;
+          }
+        })
+        currentStats.children[0].innerText = `${currentData.temperature_max} / ${currentData.temperature_min}`;
+        currentStats.children[1].innerText = `Precipitation: ${precipitation}%`;
+        currentStats.children[2].innerText = `Humidity: ${humidity}%`;
+        currentStats.children[3].innerText = `Wind: ${currentData.wind_speed} m/s`;
 
         location.children[0].innerText = locationData.city;
         location.children[1].innerText = locationData.country;
 
         weatherWidget.style.display = 'block';
-        console.log(`Current city: ${currentCity}`);
       })
       .catch((error) => {
         console.error(`Error fetching selected city: ${currentCity}`, error)
