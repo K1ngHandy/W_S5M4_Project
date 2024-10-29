@@ -31,6 +31,7 @@ async function moduleProject4() {
     // 3
   dropdown.addEventListener('change', (event) => {
     let currentCity = event.target.value;
+    
     const info = document.querySelector('.info');
 
     if (typeof axios !== 'undefined') {
@@ -42,28 +43,39 @@ async function moduleProject4() {
       .then(res => {
         currentCity.disabled = true;
         const data = res.data;
-        console.log('Fetch data:', data);
+
+        let currentData = data.current;
+        let forecastData = data.forecast.daily;
+        let locationData = data.location;
         
-        // current
-        const currentData = data.current;
-        const apparentTemp = weatherWidget.querySelector('#apparentTemp');
+        if (currentData) {
+          console.log('Current Data:', data);
+        } else if (forecastData) {
+          console.log('Forecast Data:', data);
+        } else if (locationData) {
+          console.log('Location Data:', data);
+        }
+
         const currentDescription = weatherWidget.querySelector('#todayDescription');
+        const apparentTemp = weatherWidget.querySelector('#apparentTemp');
         const currentStats = weatherWidget.querySelector('#todayStats');
+
         let precipitation = (currentData.precipitation_probability * 100);
         let humidity = currentData.humidity;
-        // forecast
-        const forecastData = data.forecast;
-        // location
-        const locationData = data.location;
 
+        const emoji = (dataInput) => {
+            const match = descriptions.filter(description => description[0] === dataInput.weather_description)
+          
+            if (match.length > 0) {
+              currentDescription.innerText = match[0][1];
+            }
+        }
+        console.log('Current Data:', emoji('currentData'));
+        
+        // current
         apparentTemp.children[1].innerText = currentData.apparent_temperature;
-        descriptions.forEach(description => {
-          if (description[0] === currentData.weather_description) {
-            console.log('Description:', description[1]);
-            currentDescription.innerText = `${description[1]}`;
-          }
-        })
-        currentStats.children[0].innerText = `${currentData.temperature_max} / ${currentData.temperature_min}`;
+        
+        currentStats.children[0].innerText = `${currentData.temperature_max}° / ${currentData.temperature_min}°`;
         currentStats.children[1].innerText = `Precipitation: ${precipitation}%`;
         currentStats.children[2].innerText = `Humidity: ${humidity}%`;
         currentStats.children[3].innerText = `Wind: ${currentData.wind_speed} m/s`;
@@ -71,6 +83,19 @@ async function moduleProject4() {
         location.children[0].innerText = locationData.city;
         location.children[1].innerText = locationData.country;
 
+        // forecast
+        const nextDays = weatherWidget.querySelectorAll('.next-day');
+        
+        nextDays.forEach(day => {
+          for (let n = 0; n < forecastData.length; n++) {
+            // console.log('Next days N children:', nextDays[n].children[n + 1]);
+          
+            day.children[1].innerText = `${forecastData[n].weather_description}`;
+            day.children[2].innerText = `${forecastData[n].temperature_max}° / ${forecastData[n].temperature_min}°`;
+            day.children[3].innerText = `Precipitation: ${forecastData[n].precipitation_probability}%`;
+          }
+        });
+        
         weatherWidget.style.display = 'block';
       })
       .catch((error) => {
