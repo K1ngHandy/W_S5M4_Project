@@ -60,7 +60,15 @@ async function moduleProject4() {
         const apparentTemp = weatherWidget.querySelector('#apparentTemp');
         const currentStats = weatherWidget.querySelector('#todayStats');
 
-        let precipitation = (currentData.precipitation_probability * 100);
+        const precipitation = "precipitation_probability";
+        const calculatePrecipitation = (data, n) => {
+          if (!n) {
+              return `${data[precipitation] * 100}%`;
+          } else {
+            return `${data[n][precipitation] * 100}%`;
+          }
+        };
+        let currentPrecipitation = calculatePrecipitation(currentData);
         let humidity = currentData.humidity;
 
         const emoji = (dataInput) => {
@@ -70,13 +78,13 @@ async function moduleProject4() {
               currentDescription.innerText = match[0][1];
             }
         }
-        console.log('Current Data:', emoji('currentData'));
+        // console.log('Current Data:', emoji(currentData));
         
         // current
         apparentTemp.children[1].innerText = currentData.apparent_temperature;
         
         currentStats.children[0].innerText = `${currentData.temperature_max}° / ${currentData.temperature_min}°`;
-        currentStats.children[1].innerText = `Precipitation: ${precipitation}%`;
+        currentStats.children[1].innerText = `Precipitation: ${currentPrecipitation}`;
         currentStats.children[2].innerText = `Humidity: ${humidity}%`;
         currentStats.children[3].innerText = `Wind: ${currentData.wind_speed} m/s`;
 
@@ -88,11 +96,13 @@ async function moduleProject4() {
         
         nextDays.forEach(day => {
           for (let n = 0; n < forecastData.length; n++) {
-            // console.log('Next days N children:', nextDays[n].children[n + 1]);
+            let forecastPrecipitation = calculatePrecipitation(forecastData, n);
+
+            console.log('Next days N children:', nextDays[n].children);
           
             day.children[1].innerText = `${forecastData[n].weather_description}`;
             day.children[2].innerText = `${forecastData[n].temperature_max}° / ${forecastData[n].temperature_min}°`;
-            day.children[3].innerText = `Precipitation: ${forecastData[n].precipitation_probability}%`;
+            day.children[3].innerText = `Precipitation: ${forecastPrecipitation}`;
           }
         });
         
