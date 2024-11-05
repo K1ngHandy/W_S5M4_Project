@@ -19,8 +19,11 @@ async function moduleProject4() {
   // 👉 Tasks 1 - 5 go here
     // 1
   const weatherWidget = document.querySelector('#weatherWidget');
-  const current = document.querySelector('#today');
-  const forecast = document.querySelector('#forecast');
+  // current
+  const today = document.querySelector('#todayDescription');
+
+  // forecast
+  // const forecast = document.querySelector('#forecast');
   const location = document.querySelector('#location');
 
   weatherWidget.style.display = 'none';
@@ -48,15 +51,11 @@ async function moduleProject4() {
         let forecastData = data.forecast.daily;
         let locationData = data.location;
         
-        if (currentData) {
-          console.log('Current Data:', data);
-        } else if (forecastData) {
-          console.log('Forecast Data:', data);
-        } else if (locationData) {
-          console.log('Location Data:', data);
+        if (!currentData) {
+          console.log('Data:', currentData);
         }
 
-        const currentDescription = weatherWidget.querySelector('#todayDescription');
+        // const currentDescription = weatherWidget.querySelector('#todayDescription');
         const apparentTemp = weatherWidget.querySelector('#apparentTemp');
         const currentStats = weatherWidget.querySelector('#todayStats');
         // precipitation
@@ -84,10 +83,7 @@ async function moduleProject4() {
         };
         
         // current
-        apparentTemp.children[1].innerText = currentData.apparent_temperature;
-
-        let currentEmoji = emoji(currentData);
-        currentDescription.innerText = `${currentEmoji}`;
+        apparentTemp.children[1].innerText = `${currentData.apparent_temperature}°`;
         
         currentStats.children[0].innerText = `${currentData.temperature_max}° / ${currentData.temperature_min}°`;
         currentStats.children[1].innerText = `Precipitation: ${currentPrecipitation}`;
