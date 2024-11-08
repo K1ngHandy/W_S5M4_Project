@@ -24,6 +24,7 @@ async function moduleProject4() {
 
   // forecast
   // const forecast = document.querySelector('#forecast');
+  // location
   const location = document.querySelector('#location');
 
   weatherWidget.style.display = 'none';
@@ -55,7 +56,6 @@ async function moduleProject4() {
           console.log('Data:', currentData);
         }
 
-        // const currentDescription = weatherWidget.querySelector('#todayDescription');
         const apparentTemp = weatherWidget.querySelector('#apparentTemp');
         const currentStats = weatherWidget.querySelector('#todayStats');
         // precipitation
@@ -84,6 +84,8 @@ async function moduleProject4() {
         
         // current
         apparentTemp.children[1].innerText = `${currentData.apparent_temperature}°`;
+        let todayDescription = currentData.weather_description;
+        today.innerText = emoji(todayDescription);
         
         currentStats.children[0].innerText = `${currentData.temperature_max}° / ${currentData.temperature_min}°`;
         currentStats.children[1].innerText = `Precipitation: ${currentPrecipitation}`;
