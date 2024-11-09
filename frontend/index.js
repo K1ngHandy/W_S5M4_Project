@@ -19,12 +19,7 @@ async function moduleProject4() {
   // 👉 Tasks 1 - 5 go here
     // 1
   const weatherWidget = document.querySelector('#weatherWidget');
-  // current
   const today = document.querySelector('#todayDescription');
-
-  // forecast
-  // const forecast = document.querySelector('#forecast');
-  // location
   const location = document.querySelector('#location');
 
   weatherWidget.style.display = 'none';
@@ -51,25 +46,17 @@ async function moduleProject4() {
         let currentData = data.current;
         let forecastData = data.forecast.daily;
         let locationData = data.location;
-        
-        if (!currentData) {
-          console.log('Data:', currentData);
-        }
 
         const apparentTemp = weatherWidget.querySelector('#apparentTemp');
         const currentStats = weatherWidget.querySelector('#todayStats');
+        const nextDays = weatherWidget.querySelectorAll('.next-day');
+
         // precipitation
-        const precipitation = "precipitation_probability";
-        const calculatePrecipitation = (data, n) => {
-          if (!n) {
-            return `${data[precipitation] * 100}%`;
-          } else {
-            return `${data[n][precipitation] * 100}%`;
-          }
+        const calculatePrecipitation = (data) => {
+          const precipitation = "precipitation_probability";
+
+          return `${data[precipitation] * 100}%`;
         };
-        let currentPrecipitation = calculatePrecipitation(currentData);
-        // current humidity
-        let currentHumidity = currentData.humidity;
 
         // weather description
         const emoji = (weatherDescription) => {
@@ -84,8 +71,10 @@ async function moduleProject4() {
         
         // current
         apparentTemp.children[1].innerText = `${currentData.apparent_temperature}°`;
-        let todayDescription = currentData.weather_description;
+        const todayDescription = currentData.weather_description;
         today.innerText = emoji(todayDescription);
+        const currentPrecipitation = calculatePrecipitation(currentData);
+        const currentHumidity = currentData.humidity;
         
         currentStats.children[0].innerText = `${currentData.temperature_max}° / ${currentData.temperature_min}°`;
         currentStats.children[1].innerText = `Precipitation: ${currentPrecipitation}`;
@@ -94,17 +83,20 @@ async function moduleProject4() {
 
         location.children[0].innerText = locationData.city;
         location.children[1].innerText = locationData.country;
-
-        // forecast
-        const nextDays = weatherWidget.querySelectorAll('.next-day');
         
+        // forecast
         nextDays.forEach((day, index) => {
-          // showing out of order
           if (forecastData[index]) {
-            let forecastPrecipitation = calculatePrecipitation(forecastData, index);
-            let forecastDescription = forecastData[index].weather_description;
-            let forecastEmoji = emoji(forecastDescription); 
+            const forecastPrecipitation = calculatePrecipitation(forecastData[index]);
+            const forecastDescription = forecastData[index].weather_description;
+            const forecastEmoji = emoji(forecastDescription);
+
+            // day of the week
+            const date = new Date(forecastData[index].date);
+            const options = { weekday: 'long' };
+            const dayOfWeek = date.toLocaleDateString('en-US', options);
           
+            day.children[0].innerText = `${dayOfWeek}`;
             day.children[1].innerText = `${forecastEmoji}`;
             day.children[2].innerText = `${forecastData[index].temperature_max}° / ${forecastData[index].temperature_min}°`;
             day.children[3].innerText = `Precipitation: ${forecastPrecipitation}`;
