@@ -1,5 +1,3 @@
-// import axios from "axios"
-
 async function moduleProject4() {
 
   // 👇 WORK WORK BELOW THIS LINE 👇
@@ -61,40 +59,48 @@ async function moduleProject4() {
           let forecastData = data.forecast.daily;
           let locationData = data.location;
         
-          // current
-          const todayDescription = currentData.weather_description;
-          const currentPrecipitation = calculatePrecipitation(currentData);
-          const currentHumidity = currentData.humidity;
+          const createCurrent = (data1, data2) => {
+            const todayDescription = data1.weather_description;
+            const currentPrecipitation = calculatePrecipitation(data1);
+            const currentHumidity = data1.humidity;
 
-          today.textContent = emoji(todayDescription);
-          
-          apparentTemp.children[1].textContent = `${currentData.apparent_temperature}°`;
-          currentStats.children[0].textContent = `${currentData.temperature_min}°/${currentData.temperature_max}°`;
-          currentStats.children[1].textContent = `Precipitation: ${currentPrecipitation}`;
-          currentStats.children[2].textContent = `Humidity: ${currentHumidity}%`;
-          currentStats.children[3].textContent = `Wind: ${currentData.wind_speed}m/s`;
-          location.children[0].textContent = locationData.city;
-          location.children[1].textContent = locationData.country;
-          
-          // forecast
-          forecast.forEach((day, index) => {
-            if (forecastData[index]) {
-              const forecastPrecipitation = calculatePrecipitation(forecastData[index]);
-              const forecastDescription = forecastData[index].weather_description;
-              const forecastEmoji = emoji(forecastDescription);
-
-              // day of the week
-              const date = new Date(forecastData[index].date);
-              const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // time zone adjust
-              const options = { weekday: 'long' };
-              const dayOfWeek = utcDate.toLocaleDateString('en-US', options);
+            today.textContent = emoji(todayDescription);
             
-              day.children[0].textContent = `${dayOfWeek}`;
-              day.children[1].textContent = `${forecastEmoji}`;
-              day.children[2].textContent = `${forecastData[index].temperature_min}°/${forecastData[index].temperature_max}°`;
-              day.children[3].textContent = `Precipitation: ${forecastPrecipitation}`;
-            }
-          });
+            apparentTemp.children[1].textContent = `${data1.apparent_temperature}°`;
+            currentStats.children[0].textContent = `${data1.temperature_min}°/${data1.temperature_max}°`;
+            currentStats.children[1].textContent = `Precipitation: ${currentPrecipitation}`;
+            currentStats.children[2].textContent = `Humidity: ${currentHumidity}%`;
+            currentStats.children[3].textContent = `Wind: ${data1.wind_speed}m/s`;
+            
+            location.children[0].textContent = data2.city;
+          }
+          
+          const createForecast = (data) => {
+            forecast.forEach((day, index) => {
+              const forecastIndex = data[index];
+
+              if (forecastIndex) {
+                const forecastPrecipitation = calculatePrecipitation(forecastIndex);
+                const forecastDescription = forecastIndex.weather_description;
+                const forecastEmoji = emoji(forecastDescription);
+  
+                // day of the week
+                const date = new Date(forecastIndex.date);
+                const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // time zone adjust
+                const options = { weekday: 'long' };
+                const dayOfWeek = utcDate.toLocaleDateString('en-US', options);
+              
+                day.children[0].textContent = `${dayOfWeek}`;
+                day.children[1].textContent = `${forecastEmoji}`;
+                day.children[2].textContent = `${forecastIndex.temperature_min}°/${forecastIndex.temperature_max}°`;
+                day.children[3].textContent = `Precipitation: ${forecastPrecipitation}`;
+              }
+            });
+          }
+          createCurrent(currentData, locationData);
+          createForecast(forecastData);
+
+          info.textContent = '';
         })
         .catch((error) => {
           console.error(`Error fetching selected city: ${currentCity}`, error);
