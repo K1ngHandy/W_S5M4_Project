@@ -32,7 +32,6 @@ async function moduleProject4() {
     // precipitation
   const calculatePrecipitation = (data) => {
     const precipitation = "precipitation_probability";
-
     return `${data[precipitation] * 100}%`;
   };
 
@@ -46,21 +45,16 @@ async function moduleProject4() {
     return match ? match[1] : "🌡️";
   };
 
-  dropdown.addEventListener('change', (event) => {
-    info.textContent = '';
+  dropdown.addEventListener('change', async (event) => {
+    info.textContent = 'Fetching weather data...';
     dropdown.disabled = true;
 
     let currentCity = event.target.value;
     console.log('Current City:', currentCity);
 
-    const fetch = () => {
-      // dropdown.disabled = true;
-      info.textContent = 'Fetching weather data...';
-      weatherWidget.style.display = 'none';
-
+    const fetch = async () => {
       axios.get(`http://localhost:3003/api/weather?city=${currentCity}`)
         .then(res => {
-          currentCity.disabled = true;
           const data = res.data;
 
           let currentData = data.current;
@@ -72,15 +66,15 @@ async function moduleProject4() {
           const currentPrecipitation = calculatePrecipitation(currentData);
           const currentHumidity = currentData.humidity;
 
-          today.innerText = emoji(todayDescription);
+          today.textContent = emoji(todayDescription);
           
-          apparentTemp.children[1].innerText = `${currentData.apparent_temperature}°`;
-          currentStats.children[0].innerText = `${currentData.temperature_min}°/${currentData.temperature_max}°`;
-          currentStats.children[1].innerText = `Precipitation: ${currentPrecipitation}`;
-          currentStats.children[2].innerText = `Humidity: ${currentHumidity}%`;
-          currentStats.children[3].innerText = `Wind: ${currentData.wind_speed} m/s`;
-          location.children[0].innerText = locationData.city;
-          location.children[1].innerText = locationData.country;
+          apparentTemp.children[1].textContent = `${currentData.apparent_temperature}°`;
+          currentStats.children[0].textContent = `${currentData.temperature_min}°/${currentData.temperature_max}°`;
+          currentStats.children[1].textContent = `Precipitation: ${currentPrecipitation}`;
+          currentStats.children[2].textContent = `Humidity: ${currentHumidity}%`;
+          currentStats.children[3].textContent = `Wind: ${currentData.wind_speed}m/s`;
+          location.children[0].textContent = locationData.city;
+          location.children[1].textContent = locationData.country;
           
           // forecast
           forecast.forEach((day, index) => {
@@ -91,17 +85,16 @@ async function moduleProject4() {
 
               // day of the week
               const date = new Date(forecastData[index].date);
+              const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000); // time zone adjust
               const options = { weekday: 'long' };
-              const dayOfWeek = date.toLocaleDateString('en-US', options);
+              const dayOfWeek = utcDate.toLocaleDateString('en-US', options);
             
-              day.children[0].innerText = `${dayOfWeek}`;
-              day.children[1].innerText = `${forecastEmoji}`;
-              day.children[2].innerText = `${forecastData[index].temperature_min}°/${forecastData[index].temperature_max}°`;
-              day.children[3].innerText = `Precipitation: ${forecastPrecipitation}`;
+              day.children[0].textContent = `${dayOfWeek}`;
+              day.children[1].textContent = `${forecastEmoji}`;
+              day.children[2].textContent = `${forecastData[index].temperature_min}°/${forecastData[index].temperature_max}°`;
+              day.children[3].textContent = `Precipitation: ${forecastPrecipitation}`;
             }
           });
-        
-          // weatherWidget.style.display = 'block';
         })
         .catch((error) => {
           console.error(`Error fetching selected city: ${currentCity}`, error);
@@ -110,12 +103,12 @@ async function moduleProject4() {
           dropdown.disabled = false;
           weatherWidget.style.display = 'block';
           info.textContent = '';
-          currentCity.disabled = false;
         })
       };
 
       if (typeof axios !== 'undefined') {
-        fetch();
+        weatherWidget.style.display = 'none';
+        await fetch();
       } else {
         console.error('Axios is undefined');
       }    
