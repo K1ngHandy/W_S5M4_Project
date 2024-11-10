@@ -47,13 +47,14 @@ async function moduleProject4() {
   };
 
   dropdown.addEventListener('change', (event) => {
-    info.innerText = '';
+    info.textContent = '';
+    dropdown.disabled = true;
 
     let currentCity = event.target.value;
     console.log('Current City:', currentCity);
 
     const fetch = () => {
-      dropdown.style.disabled = true;
+      // dropdown.disabled = true;
       info.textContent = 'Fetching weather data...';
       weatherWidget.style.display = 'none';
 
@@ -106,6 +107,7 @@ async function moduleProject4() {
           console.error(`Error fetching selected city: ${currentCity}`, error);
         })
         .finally(() => {
+          dropdown.disabled = false;
           weatherWidget.style.display = 'block';
           info.textContent = '';
           currentCity.disabled = false;
